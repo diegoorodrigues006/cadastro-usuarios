@@ -1,13 +1,44 @@
 const form = document.getElementById('formCadastro');
-const tabelaBody = document.querySelector('#tabelaUsuarios tbody');
+const listaUsuariosDiv = document.getElementById('listaUsuarios'); // Mudou de tabela para div
 const alerta = document.getElementById('alerta');
-const contadorElemento = document.getElementById('contador'); // Puxando o contador
+const textoAlerta = document.getElementById('textoAlerta');
+const contadorElemento = document.getElementById('contador');
 
 let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
 let alertaTimeout;
 
+// --- Lógica do Dark Mode ---
+const btnTema = document.getElementById('btnTema');
+const iconeTema = btnTema.querySelector('i');
+let isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+function aplicarTema() {
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        iconeTema.classList.remove('fa-moon');
+        iconeTema.classList.add('fa-sun');
+    } else {
+        document.body.classList.remove('dark-mode');
+        iconeTema.classList.remove('fa-sun');
+        iconeTema.classList.add('fa-moon');
+    }
+}
+// Aplica o tema logo que a página carrega
+aplicarTema();
+
+// Alterna o tema ao clicar no botão
+btnTema.addEventListener('click', () => {
+    isDarkMode = !isDarkMode;
+    localStorage.setItem('darkMode', isDarkMode);
+    aplicarTema();
+});
+// -----------------------------
+
 function mostrarAlerta(mensagem, tipo) {
-    alerta.textContent = mensagem;
+    textoAlerta.innerHTML = tipo === 'sucesso' 
+        ? `<i class="fa-solid fa-circle-check"></i> ${mensagem}` 
+        : `<i class="fa-solid fa-circle-exclamation"></i> ${mensagem}`;
+        
     alerta.className = `alerta ${tipo}`;
     
     clearTimeout(alertaTimeout);
@@ -16,19 +47,28 @@ function mostrarAlerta(mensagem, tipo) {
     }, 3000);
 }
 
-function carregarTabela() {
-    tabelaBody.innerHTML = '';
+function carregarCards() {
+    listaUsuariosDiv.innerHTML = '';
+    
     usuarios.forEach((usuario, index) => {
-        const linha = document.createElement('tr');
-        linha.innerHTML = `
-            <td>${usuario.nome}</td>
-            <td>${usuario.email}</td>
-            <td><button class="btn-excluir" onclick="excluirUsuario(${index})">Excluir</button></td>
+        // Pega a primeira letra do nome para o Avatar
+        const inicial = usuario.nome.charAt(0);
+        
+        const card = document.createElement('div');
+        card.className = 'usuario-card';
+        card.innerHTML = `
+            <div class="avatar">${inicial}</div>
+            <div class="info">
+                <strong>${usuario.nome}</strong>
+                <span>${usuario.email}</span>
+            </div>
+            <button class="btn-excluir" onclick="excluirUsuario(${index})" title="Excluir usuário">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
         `;
-        tabelaBody.appendChild(linha);
+        listaUsuariosDiv.appendChild(card);
     });
     
-    // --- NOVO: Atualiza o contador na tela ---
     contadorElemento.textContent = usuarios.length;
 }
 
@@ -49,7 +89,7 @@ form.addEventListener('submit', (e) => {
     }
 
     if (!validarEmail(email)) {
-        mostrarAlerta('Por favor, insira um e-mail válido (ex: nome@email.com)!', 'erro');
+        mostrarAlerta('Insira um e-mail válido!', 'erro');
         return;
     }
 
@@ -63,7 +103,7 @@ form.addEventListener('submit', (e) => {
     localStorage.setItem('usuarios', JSON.stringify(usuarios));
     
     form.reset();
-    carregarTabela();
+    carregarCards();
     mostrarAlerta('Usuário cadastrado com sucesso!', 'sucesso');
 });
 
@@ -71,9 +111,10 @@ function excluirUsuario(index) {
     if (confirm('Deseja realmente excluir este usuário?')) {
         usuarios.splice(index, 1);
         localStorage.setItem('usuarios', JSON.stringify(usuarios));
-        carregarTabela();
+        carregarCards();
         mostrarAlerta('Usuário excluído!', 'sucesso');
     }
 }
 
-carregarTabela();
+// Carrega os cards ao iniciar
+carregarCards();

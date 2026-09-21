@@ -4,13 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Cadastro</title>
+    
+    <!-- Fonte moderna do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Ícones FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Link para o seu CSS -->
     <link rel="stylesheet" href="src/css/style.css">
 </head>
 <body>
-    <div id="alerta" class="alerta oculto"></div>
+    <!-- Botão Dark Mode -->
+    <button id="btnTema" class="btn-tema" title="Alternar Tema">
+        <i class="fa-solid fa-moon"></i>
+    </button>
+
+    <!-- Alerta Visual Moderno -->
+    <div id="alerta" class="alerta oculto">
+        <span id="textoAlerta"></span>
+    </div>
+
+    <div class="header-titulo">
+        <h1>Cadastro de Usuários</h1>
+    </div>
 
     <div class="container">
-        <h2>Cadastro de Usuários</h2>
         <form id="formCadastro">
             <div class="input-group">
                 <label for="nome">Nome</label>
@@ -24,21 +42,25 @@
                 <label for="senha">Senha</label>
                 <input type="password" id="senha" required minlength="6">
             </div>
-            <button type="submit">Cadastrar</button>
+            <button type="submit" class="btn-cadastrar">
+                <i class="fa-solid fa-plus"></i> Cadastrar Usuário
+            </button>
         </form>
-
-        <h3>Usuários Cadastrados <span id="contador" class="badge">0</span></h3>
-        <table id="tabelaUsuarios">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>E-mail</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
     </div>
+
+    <div class="lista-container">
+        <div class="lista-header">
+            <h3>Usuários Cadastrados</h3>
+            <span id="contador" class="badge">0</span>
+        </div>
+        
+        <!-- Substituímos a tabela por uma Grid de Cards -->
+        <div id="listaUsuarios" class="grid-usuarios">
+            <!-- Cards preenchidos via JavaScript -->
+        </div>
+    </div>
+
+    <!-- Link para o seu JS -->
     <script src="src/js/script.js"></script>
 </body>
 </html>
