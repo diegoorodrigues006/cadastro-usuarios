@@ -4,33 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Cadastro</title>
-    
-    <!-- NOVO: Logótipo da aba do navegador (Favicon) usando SVG em Base64 -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%231877f2'/%3E%3Cpath d='M50 25a15 15 0 1 1 0 30 15 15 0 0 1 0-30zm0 38c16.5 0 30 9.8 30 22v3H20v-3c0-12.2 13.5-22 30-22z' fill='%23ffffff'/%3E%3C/svg%3E">
-    
-    <!-- Fonte moderna do Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Ícones FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Link para o teu CSS -->
     <link rel="stylesheet" href="src/css/style.css">
 </head>
 <body>
-    <!-- Botão Dark Mode -->
     <button id="btnTema" class="btn-tema" title="Alternar Tema">
         <i class="fa-solid fa-moon"></i>
     </button>
 
-    <!-- Alerta Visual Moderno -->
     <div id="alerta" class="alerta oculto">
         <span id="textoAlerta"></span>
     </div>
 
-    <!-- NOVO: Cabeçalho com o Logótipo SVG -->
     <div class="header-titulo">
         <div class="logo-container">
-            <!-- Código do Logótipo (SVG Puro) -->
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="logo-svg">
                 <rect width="100" height="100" rx="24" fill="var(--primary-color)"/>
                 <path d="M50 25a15 15 0 1 1 0 30 15 15 0 0 1 0-30zm0 38c16.5 0 30 9.8 30 22v3H20v-3c0-12.2 13.5-22 30-22z" fill="#ffffff"/>
@@ -53,9 +42,16 @@
                 <label for="senha">Senha</label>
                 <input type="password" id="senha" required minlength="6">
             </div>
-            <button type="submit" class="btn-cadastrar">
-                <i class="fa-solid fa-plus"></i> Cadastrar Usuário
-            </button>
+            
+            <!-- NOVO: Área dos botões -->
+            <div class="form-acoes">
+                <button type="submit" id="btnSalvar" class="btn-cadastrar">
+                    <i class="fa-solid fa-plus"></i> Cadastrar Usuário
+                </button>
+                <button type="button" id="btnCancelar" class="btn-cancelar oculto">
+                    Cancelar
+                </button>
+            </div>
         </form>
     </div>
 
@@ -64,11 +60,7 @@
             <h3>Usuários Cadastrados</h3>
             <span id="contador" class="badge">0</span>
         </div>
-        
-        <!-- Grid de Cards -->
-        <div id="listaUsuarios" class="grid-usuarios">
-            <!-- Cards preenchidos via JavaScript -->
-        </div>
+        <div id="listaUsuarios" class="grid-usuarios"></div>
     </div>
 
     <script src="src/js/script.js"></script>
