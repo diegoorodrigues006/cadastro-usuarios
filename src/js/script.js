@@ -1,7 +1,20 @@
 const form = document.getElementById('formCadastro');
 const tabelaBody = document.querySelector('#tabelaUsuarios tbody');
+const alerta = document.getElementById('alerta'); // Puxando a div do alerta
 
 let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+let alertaTimeout;
+
+// Função para exibir o alerta na tela
+function mostrarAlerta(mensagem, tipo) {
+    alerta.textContent = mensagem;
+    alerta.className = `alerta ${tipo}`; // Adiciona a classe de sucesso ou erro
+    
+    clearTimeout(alertaTimeout); // Reseta o tempo se clicar várias vezes rápido
+    alertaTimeout = setTimeout(() => {
+        alerta.classList.add('oculto');
+    }, 3000); // Some após 3 segundos
+}
 
 function carregarTabela() {
     tabelaBody.innerHTML = '';
@@ -23,7 +36,7 @@ form.addEventListener('submit', (e) => {
     const senha = document.getElementById('senha').value;
 
     if (!nome || !email || !senha) {
-        alert('Preencha todos os campos!');
+        mostrarAlerta('Preencha todos os campos!', 'erro');
         return;
     }
 
@@ -32,6 +45,7 @@ form.addEventListener('submit', (e) => {
     
     form.reset();
     carregarTabela();
+    mostrarAlerta('Usuário cadastrado com sucesso!', 'sucesso');
 });
 
 function excluirUsuario(index) {
@@ -39,6 +53,7 @@ function excluirUsuario(index) {
         usuarios.splice(index, 1);
         localStorage.setItem('usuarios', JSON.stringify(usuarios));
         carregarTabela();
+        mostrarAlerta('Usuário excluído!', 'sucesso');
     }
 }
 
