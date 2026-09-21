@@ -4,13 +4,17 @@ const alerta = document.getElementById('alerta');
 const textoAlerta = document.getElementById('textoAlerta');
 const contadorElemento = document.getElementById('contador');
 
-// NOVO: Pegando os botões de ação
 const btnSalvar = document.getElementById('btnSalvar');
 const btnCancelar = document.getElementById('btnCancelar');
 
+// NOVO: Seletores para o Mostrar/Ocultar Senha
+const btnToggleSenha = document.getElementById('btnToggleSenha');
+const inputSenha = document.getElementById('senha');
+const iconeOlho = document.getElementById('iconeOlho');
+
 let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
 let alertaTimeout;
-let indiceEdicao = -1; // -1 significa que estamos criando um novo usuário
+let indiceEdicao = -1;
 
 // Tema Dark Mode
 const btnTema = document.getElementById('btnTema');
@@ -34,6 +38,19 @@ btnTema.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
     localStorage.setItem('darkMode', isDarkMode);
     aplicarTema();
+});
+
+// NOVO: Lógica do clique no ícone de olho
+btnToggleSenha.addEventListener('click', () => {
+    if (inputSenha.type === 'password') {
+        inputSenha.type = 'text';
+        iconeOlho.classList.remove('fa-eye');
+        iconeOlho.classList.add('fa-eye-slash');
+    } else {
+        inputSenha.type = 'password';
+        iconeOlho.classList.remove('fa-eye-slash');
+        iconeOlho.classList.add('fa-eye');
+    }
 });
 
 function mostrarAlerta(mensagem, tipo) {
@@ -63,7 +80,6 @@ function carregarCards() {
                 <strong>${usuario.nome}</strong>
                 <span>${usuario.email}</span>
             </div>
-            <!-- NOVO: Área de botões no card com Lápis de edição -->
             <div class="acoes-card">
                 <button class="btn-editar" onclick="editarUsuario(${index})" title="Editar usuário">
                     <i class="fa-solid fa-pen"></i>
@@ -79,7 +95,6 @@ function carregarCards() {
     contadorElemento.textContent = usuarios.length;
 }
 
-// NOVO: Função para preencher o formulário para edição
 function editarUsuario(index) {
     const usuario = usuarios[index];
     document.getElementById('nome').value = usuario.nome;
@@ -92,11 +107,9 @@ function editarUsuario(index) {
     btnSalvar.style.backgroundColor = 'var(--success-text)';
     btnCancelar.classList.remove('oculto');
     
-    // Rola a página para o topo suavemente
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// NOVO: Função para cancelar a edição
 function cancelarEdicao() {
     form.reset();
     indiceEdicao = -1;
@@ -128,18 +141,16 @@ form.addEventListener('submit', (e) => {
         return;
     }
 
-    // Verifica duplicação excluindo o usuário atual caso esteja sendo editado
     const emailJaExiste = usuarios.some((usuario, index) => usuario.email === email && index !== indiceEdicao);
     if (emailJaExiste) {
         mostrarAlerta('Este e-mail já está cadastrado!', 'erro');
         return;
     }
 
-    // NOVO: Lógica que decide se vai Atualizar ou Cadastrar
     if (indiceEdicao >= 0) {
         usuarios[indiceEdicao] = { nome, email, senha };
         mostrarAlerta('Usuário atualizado com sucesso!', 'sucesso');
-        cancelarEdicao(); // Limpa form e volta ao estado normal
+        cancelarEdicao();
     } else {
         usuarios.push({ nome, email, senha });
         mostrarAlerta('Usuário cadastrado com sucesso!', 'sucesso');
@@ -155,7 +166,6 @@ function excluirUsuario(index) {
         usuarios.splice(index, 1);
         localStorage.setItem('usuarios', JSON.stringify(usuarios));
         
-        // Se excluiu o usuário que estava sendo editado, cancela a edição
         if (index === indiceEdicao) {
             cancelarEdicao();
         }

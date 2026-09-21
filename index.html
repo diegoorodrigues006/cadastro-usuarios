@@ -40,10 +40,15 @@
             </div>
             <div class="input-group">
                 <label for="senha">Senha</label>
-                <input type="password" id="senha" required minlength="6">
+                <!-- NOVO: Container para alinhar o input de senha e o botão de mostrar/ocultar -->
+                <div class="password-container">
+                    <input type="password" id="senha" required minlength="6">
+                    <button type="button" id="btnToggleSenha" class="btn-toggle-senha" title="Mostrar/Ocultar Senha">
+                        <i class="fa-solid fa-eye" id="iconeOlho"></i>
+                    </button>
+                </div>
             </div>
             
-            <!-- NOVO: Área dos botões -->
             <div class="form-acoes">
                 <button type="submit" id="btnSalvar" class="btn-cadastrar">
                     <i class="fa-solid fa-plus"></i> Cadastrar Usuário
