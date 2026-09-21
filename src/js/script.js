@@ -1,19 +1,18 @@
 const form = document.getElementById('formCadastro');
 const tabelaBody = document.querySelector('#tabelaUsuarios tbody');
-const alerta = document.getElementById('alerta'); // Puxando a div do alerta
+const alerta = document.getElementById('alerta');
 
 let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
 let alertaTimeout;
 
-// Função para exibir o alerta na tela
 function mostrarAlerta(mensagem, tipo) {
     alerta.textContent = mensagem;
-    alerta.className = `alerta ${tipo}`; // Adiciona a classe de sucesso ou erro
+    alerta.className = `alerta ${tipo}`;
     
-    clearTimeout(alertaTimeout); // Reseta o tempo se clicar várias vezes rápido
+    clearTimeout(alertaTimeout);
     alertaTimeout = setTimeout(() => {
         alerta.classList.add('oculto');
-    }, 3000); // Some após 3 segundos
+    }, 3000);
 }
 
 function carregarTabela() {
@@ -29,6 +28,12 @@ function carregarTabela() {
     });
 }
 
+// --- NOVO: Função para validar o formato do e-mail com Regex ---
+function validarEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
+
 form.addEventListener('submit', (e) => {
     e.preventDefault();
     const nome = document.getElementById('nome').value.trim();
@@ -37,6 +42,19 @@ form.addEventListener('submit', (e) => {
 
     if (!nome || !email || !senha) {
         mostrarAlerta('Preencha todos os campos!', 'erro');
+        return;
+    }
+
+    // --- NOVO: Validação de formato de e-mail ---
+    if (!validarEmail(email)) {
+        mostrarAlerta('Por favor, insira um e-mail válido (ex: nome@email.com)!', 'erro');
+        return;
+    }
+
+    // --- NOVO: Evitar e-mails duplicados ---
+    const emailJaExiste = usuarios.some(usuario => usuario.email === email);
+    if (emailJaExiste) {
+        mostrarAlerta('Este e-mail já está cadastrado!', 'erro');
         return;
     }
 
