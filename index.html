@@ -38,9 +38,13 @@
                 <label for="email">E-mail</label>
                 <input type="email" id="email" required>
             </div>
+            <!-- NOVO: Campo de Telefone -->
+            <div class="input-group">
+                <label for="telefone">Telefone</label>
+                <input type="tel" id="telefone" placeholder="(00) 00000-0000" maxlength="15" required>
+            </div>
             <div class="input-group">
                 <label for="senha">Senha</label>
-                <!-- NOVO: Container para alinhar o input de senha e o botão de mostrar/ocultar -->
                 <div class="password-container">
                     <input type="password" id="senha" required minlength="6">
                     <button type="button" id="btnToggleSenha" class="btn-toggle-senha" title="Mostrar/Ocultar Senha">
@@ -65,6 +69,13 @@
             <h3>Usuários Cadastrados</h3>
             <span id="contador" class="badge">0</span>
         </div>
+
+        <!-- NOVO: Barra de Pesquisa -->
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="inputPesquisa" placeholder="Pesquisar por nome ou e-mail...">
+        </div>
+
         <div id="listaUsuarios" class="grid-usuarios"></div>
     </div>
 

@@ -7,10 +7,13 @@ const contadorElemento = document.getElementById('contador');
 const btnSalvar = document.getElementById('btnSalvar');
 const btnCancelar = document.getElementById('btnCancelar');
 
-// NOVO: Seletores para o Mostrar/Ocultar Senha
 const btnToggleSenha = document.getElementById('btnToggleSenha');
 const inputSenha = document.getElementById('senha');
 const iconeOlho = document.getElementById('iconeOlho');
+
+// NOVO: Seletores do Telefone e Pesquisa
+const inputTelefone = document.getElementById('telefone');
+const inputPesquisa = document.getElementById('inputPesquisa');
 
 let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
 let alertaTimeout;
@@ -40,7 +43,6 @@ btnTema.addEventListener('click', () => {
     aplicarTema();
 });
 
-// NOVO: Lógica do clique no ícone de olho
 btnToggleSenha.addEventListener('click', () => {
     if (inputSenha.type === 'password') {
         inputSenha.type = 'text';
@@ -51,6 +53,23 @@ btnToggleSenha.addEventListener('click', () => {
         iconeOlho.classList.remove('fa-eye-slash');
         iconeOlho.classList.add('fa-eye');
     }
+});
+
+// NOVO: Máscara automática de Telefone
+inputTelefone.addEventListener('input', (e) => {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 11) value = value.slice(0, 11);
+    
+    if (value.length > 10) {
+        value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+    } else if (value.length > 6) {
+        value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+    } else if (value.length > 2) {
+        value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+    } else if (value.length > 0) {
+        value = value.replace(/^(\d*)/, '($1');
+    }
+    e.target.value = value;
 });
 
 function mostrarAlerta(mensagem, tipo) {
@@ -66,10 +85,19 @@ function mostrarAlerta(mensagem, tipo) {
     }, 3000);
 }
 
-function carregarCards() {
+// NOVO: Carregar cards com suporte a filtro de pesquisa
+function carregarCards(filtro = '') {
     listaUsuariosDiv.innerHTML = '';
     
     usuarios.forEach((usuario, index) => {
+        const termoFiltro = filtro.toLowerCase();
+        const nomeMatch = usuario.nome.toLowerCase().includes(termoFiltro);
+        const emailMatch = usuario.email.toLowerCase().includes(termoFiltro);
+        
+        if (filtro && !nomeMatch && !emailMatch) {
+            return; // Pula se não corresponder à pesquisa
+        }
+        
         const inicial = usuario.nome.charAt(0);
         
         const card = document.createElement('div');
@@ -79,6 +107,7 @@ function carregarCards() {
             <div class="info">
                 <strong>${usuario.nome}</strong>
                 <span>${usuario.email}</span>
+                <span class="telefone-card"><i class="fa-solid fa-phone"></i> ${usuario.telefone || 'Não informado'}</span>
             </div>
             <div class="acoes-card">
                 <button class="btn-editar" onclick="editarUsuario(${index})" title="Editar usuário">
@@ -95,10 +124,16 @@ function carregarCards() {
     contadorElemento.textContent = usuarios.length;
 }
 
+// NOVO: Evento da Barra de Pesquisa em tempo real
+inputPesquisa.addEventListener('input', (e) => {
+    carregarCards(e.target.value);
+});
+
 function editarUsuario(index) {
     const usuario = usuarios[index];
     document.getElementById('nome').value = usuario.nome;
     document.getElementById('email').value = usuario.email;
+    document.getElementById('telefone').value = usuario.telefone || '';
     document.getElementById('senha').value = usuario.senha;
     
     indiceEdicao = index;
@@ -129,9 +164,10 @@ form.addEventListener('submit', (e) => {
     e.preventDefault();
     const nome = document.getElementById('nome').value.trim();
     const email = document.getElementById('email').value.trim();
+    const telefone = document.getElementById('telefone').value.trim();
     const senha = document.getElementById('senha').value;
 
-    if (!nome || !email || !senha) {
+    if (!nome || !email || !telefone || !senha) {
         mostrarAlerta('Preencha todos os campos!', 'erro');
         return;
     }
@@ -148,17 +184,17 @@ form.addEventListener('submit', (e) => {
     }
 
     if (indiceEdicao >= 0) {
-        usuarios[indiceEdicao] = { nome, email, senha };
+        usuarios[indiceEdicao] = { nome, email, telefone, senha };
         mostrarAlerta('Usuário atualizado com sucesso!', 'sucesso');
         cancelarEdicao();
     } else {
-        usuarios.push({ nome, email, senha });
+        usuarios.push({ nome, email, telefone, senha });
         mostrarAlerta('Usuário cadastrado com sucesso!', 'sucesso');
         form.reset();
     }
 
     localStorage.setItem('usuarios', JSON.stringify(usuarios));
-    carregarCards();
+    carregarCards(inputPesquisa.value);
 });
 
 function excluirUsuario(index) {
@@ -170,7 +206,7 @@ function excluirUsuario(index) {
             cancelarEdicao();
         }
         
-        carregarCards();
+        carregarCards(inputPesquisa.value);
         mostrarAlerta('Usuário excluído!', 'sucesso');
     }
 }
