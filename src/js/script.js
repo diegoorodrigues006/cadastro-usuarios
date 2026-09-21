@@ -1,6 +1,7 @@
 const form = document.getElementById('formCadastro');
 const tabelaBody = document.querySelector('#tabelaUsuarios tbody');
 const alerta = document.getElementById('alerta');
+const contadorElemento = document.getElementById('contador'); // Puxando o contador
 
 let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
 let alertaTimeout;
@@ -26,9 +27,11 @@ function carregarTabela() {
         `;
         tabelaBody.appendChild(linha);
     });
+    
+    // --- NOVO: Atualiza o contador na tela ---
+    contadorElemento.textContent = usuarios.length;
 }
 
-// --- NOVO: Função para validar o formato do e-mail com Regex ---
 function validarEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
@@ -45,13 +48,11 @@ form.addEventListener('submit', (e) => {
         return;
     }
 
-    // --- NOVO: Validação de formato de e-mail ---
     if (!validarEmail(email)) {
         mostrarAlerta('Por favor, insira um e-mail válido (ex: nome@email.com)!', 'erro');
         return;
     }
 
-    // --- NOVO: Evitar e-mails duplicados ---
     const emailJaExiste = usuarios.some(usuario => usuario.email === email);
     if (emailJaExiste) {
         mostrarAlerta('Este e-mail já está cadastrado!', 'erro');
